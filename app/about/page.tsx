@@ -1,17 +1,17 @@
-import { Navbar } from "@/components/Navbar";
-import { Footer } from "@/components/Footer";
+"use client";
+
+import { useLanguage } from "@/components/LanguageContext";
 
 export default function AboutPage() {
+  const { t } = useLanguage();
+
   return (
     <div className="container py-20 mx-auto px-4">
-      <h1 className="text-4xl font-bold mb-8">About Pawn to Glory</h1>
+      <h1 className="text-4xl font-bold mb-8">{t("about.page.title")}</h1>
       <p className="text-lg text-muted-foreground mb-4">
-        We are dedicated to elevating the chess community through professional tournaments, 
-        expert courses, and a vibrant club atmosphere.
+        {t("about.page.desc1")}
       </p>
-      <p className="text-lg text-muted-foreground">
-        Founded in 2026, Pawn to Glory has grown into a hub for players of all levels.
-      </p>
+      <p className="text-lg text-muted-foreground">{t("about.page.desc2")}</p>
     </div>
   );
 }

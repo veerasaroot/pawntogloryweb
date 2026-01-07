@@ -1,57 +1,9 @@
 import type { Metadata } from "next";
-import localFont from "next/font/local";
 import "./globals.css";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { cn } from "@/lib/utils";
 import { LanguageProvider } from "@/components/LanguageContext";
-
-const googleSans = localFont({
-  src: [
-    {
-      path: './fonts/GoogleSans-Regular.woff2',
-      weight: '400',
-      style: 'normal',
-    },
-    {
-      path: './fonts/GoogleSans-Italic.woff2',
-      weight: '400',
-      style: 'italic',
-    },
-    {
-      path: './fonts/GoogleSans-Medium.woff2',
-      weight: '500',
-      style: 'normal',
-    },
-    {
-      path: './fonts/GoogleSans-MediumItalic.woff2',
-      weight: '500',
-      style: 'italic',
-    },
-    {
-      path: './fonts/GoogleSans-SemiBold.woff2',
-      weight: '600',
-      style: 'normal',
-    },
-    {
-      path: './fonts/GoogleSans-SemiBoldItalic.woff2',
-      weight: '600',
-      style: 'italic',
-    },
-    {
-      path: './fonts/GoogleSans-Bold.woff2',
-      weight: '700',
-      style: 'normal',
-    },
-    {
-      path: './fonts/GoogleSans-BoldItalic.woff2',
-      weight: '700',
-      style: 'italic',
-    },
-  ],
-  variable: "--font-google-sans",
-  display: "swap"
-});
 
 export const metadata: Metadata = {
   title: "Pawn to Glory",
@@ -65,10 +17,21 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="h-full">
+      <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link
+          rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossOrigin="anonymous"
+        />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Google+Sans:ital,opsz,wght@0,17..18,400..700;1,17..18,400..700&display=swap"
+          rel="stylesheet"
+        />
+      </head>
       <body
         className={cn(
-          "min-h-screen bg-background font-sans antialiased flex flex-col",
-          googleSans.variable
+          "min-h-screen bg-background font-sans antialiased flex flex-col"
         )}
       >
         <LanguageProvider>

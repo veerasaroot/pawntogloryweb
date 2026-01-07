@@ -4,6 +4,7 @@ import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { Upload, X, Loader2 } from "lucide-react";
 import Image from "next/image";
+import { useLanguage } from "@/components/LanguageContext";
 
 interface ImageUploadProps {
   onUpload: (url: string) => void;
@@ -11,10 +12,15 @@ interface ImageUploadProps {
   className?: string;
 }
 
-export function ImageUpload({ onUpload, defaultImage, className }: ImageUploadProps) {
+export function ImageUpload({
+  onUpload,
+  defaultImage,
+  className,
+}: ImageUploadProps) {
   const [imageUrl, setImageUrl] = useState<string | undefined>(defaultImage);
   const [uploading, setUploading] = useState(false);
   const supabase = createClient();
+  const { t } = useLanguage();
 
   const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     try {
@@ -22,42 +28,42 @@ export function ImageUpload({ onUpload, defaultImage, className }: ImageUploadPr
       const file = e.target.files?.[0];
       if (!file) return;
 
-      const fileExt = file.name.split('.').pop();
+      const fileExt = file.name.split(".").pop();
       const fileName = `${Math.random()}.${fileExt}`;
       const filePath = `${fileName}`;
 
       const { error: uploadError } = await supabase.storage
-        .from('images')
+        .from("images")
         .upload(filePath, file);
 
       if (uploadError) {
         throw uploadError;
       }
 
-      const { data } = supabase.storage.from('images').getPublicUrl(filePath);
-      
+      const { data } = supabase.storage.from("images").getPublicUrl(filePath);
+
       setImageUrl(data.publicUrl);
       onUpload(data.publicUrl);
     } catch (error: any) {
-      alert('Error uploading image: ' + error.message);
+      alert(t("upload.error") + error.message);
     } finally {
       setUploading(false);
     }
   };
 
   const removeImage = () => {
-      setImageUrl(undefined);
-      onUpload('');
+    setImageUrl(undefined);
+    onUpload("");
   };
 
   return (
     <div className={`flex flex-col gap-4 ${className}`}>
       {imageUrl ? (
         <div className="relative w-full aspect-video rounded-lg overflow-hidden border border-border group">
-          <Image 
-            src={imageUrl} 
-            alt="Uploaded image" 
-            fill 
+          <Image
+            src={imageUrl}
+            alt={t("upload.image_alt")}
+            fill
             className="object-cover"
           />
           <button
@@ -73,21 +79,24 @@ export function ImageUpload({ onUpload, defaultImage, className }: ImageUploadPr
           <label className="flex flex-col items-center justify-center w-full h-64 border-2 border-dashed rounded-lg cursor-pointer bg-muted/50 hover:bg-muted transition-colors border-border">
             <div className="flex flex-col items-center justify-center pt-5 pb-6">
               {uploading ? (
-                 <Loader2 className="w-8 h-8 mb-4 text-muted-foreground animate-spin" />
+                <Loader2 className="w-8 h-8 mb-4 text-muted-foreground animate-spin" />
               ) : (
-                 <Upload className="w-8 h-8 mb-4 text-muted-foreground" />
+                <Upload className="w-8 h-8 mb-4 text-muted-foreground" />
               )}
               <p className="mb-2 text-sm text-muted-foreground">
-                <span className="font-semibold">Click to upload</span> or drag and drop
+                <span className="font-semibold">{t("upload.click")}</span>{" "}
+                {t("upload.drag")}
               </p>
-              <p className="text-xs text-muted-foreground">SVG, PNG, JPG or GIF (MAX. 2MB)</p>
+              <p className="text-xs text-muted-foreground">
+                {t("upload.hint")}
+              </p>
             </div>
-            <input 
-                type="file" 
-                className="hidden" 
-                accept="image/*"
-                onChange={handleUpload}
-                disabled={uploading}
+            <input
+              type="file"
+              className="hidden"
+              accept="image/*"
+              onChange={handleUpload}
+              disabled={uploading}
             />
           </label>
         </div>

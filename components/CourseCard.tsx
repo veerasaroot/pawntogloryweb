@@ -3,6 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
+import { useLanguage } from "@/components/LanguageContext";
 
 interface CourseCardProps {
   id: string;
@@ -21,6 +22,8 @@ export function CourseCard({
   price,
   className,
 }: CourseCardProps) {
+  const { t } = useLanguage();
+
   return (
     <Link
       href={`/course/${id}`}
@@ -31,7 +34,7 @@ export function CourseCard({
     >
       <div className="relative aspect-video w-full overflow-hidden bg-muted">
         {thumbnail ? (
-           <Image
+          <Image
             src={thumbnail}
             alt={title}
             fill
@@ -39,11 +42,11 @@ export function CourseCard({
           />
         ) : (
           <div className="flex h-full w-full items-center justify-center text-muted-foreground bg-muted">
-            No Image
+            {t("course.card.no_image")}
           </div>
         )}
         <div className="absolute top-2 right-2 rounded bg-black/70 px-2 py-1 text-xs font-bold text-white backdrop-blur-sm">
-          {price === 0 ? "FREE" : `$${price}`}
+          {price === 0 ? t("course.card.free") : `$${price}`}
         </div>
       </div>
       <div className="flex flex-1 flex-col p-4">
@@ -54,12 +57,12 @@ export function CourseCard({
           {description}
         </p>
         <div className="mt-4 flex items-center justify-between">
-           <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
-             View Course
-           </span>
-           <span className="text-foreground group-hover:translate-x-1 transition-transform">
-             &rarr;
-           </span>
+          <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+            {t("course.card.view")}
+          </span>
+          <span className="text-foreground group-hover:translate-x-1 transition-transform">
+            &rarr;
+          </span>
         </div>
       </div>
     </Link>

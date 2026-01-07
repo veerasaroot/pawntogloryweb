@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { cn } from "@/lib/utils";
+import { useLanguage } from "@/components/LanguageContext";
 
 export default function SignupPage() {
   const [email, setEmail] = useState("");
@@ -14,6 +15,7 @@ export default function SignupPage() {
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
   const supabase = createClient();
+  const { t } = useLanguage();
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -37,7 +39,7 @@ export default function SignupPage() {
     } else {
       // Check if email confirmation is required or auto-login
       // Usually need to check email.
-      alert("Check your email for confirmation link!");
+      alert(t("auth.signup.check_email"));
       router.push("/login");
     }
   };
@@ -47,20 +49,23 @@ export default function SignupPage() {
       <div className="w-full max-w-md space-y-8">
         <div className="text-center">
           <h2 className="mt-6 text-3xl font-bold tracking-tight text-foreground">
-            Create your account
+            {t("auth.signup.title")}
           </h2>
           <p className="mt-2 text-sm text-muted-foreground">
-            Already have an account?{" "}
-            <Link href="/login" className="font-medium text-foreground hover:underline">
-              Sign in
+            {t("auth.signup.already")}{" "}
+            <Link
+              href="/login"
+              className="font-medium text-foreground hover:underline"
+            >
+              {t("auth.signup.signin")}
             </Link>
           </p>
         </div>
         <form className="mt-8 space-y-6" onSubmit={handleSignup}>
           <div className="-space-y-px rounded-md shadow-sm">
-             <div>
+            <div>
               <label htmlFor="full-name" className="sr-only">
-                Full Name
+                {t("auth.fullname_label")}
               </label>
               <input
                 id="full-name"
@@ -68,14 +73,14 @@ export default function SignupPage() {
                 type="text"
                 required
                 className="relative block w-full rounded-t-md border border-input bg-transparent px-3 py-2 text-foreground placeholder-muted-foreground focus:z-10 focus:border-foreground focus:outline-none focus:ring-1 focus:ring-foreground sm:text-sm"
-                placeholder="Full Name"
+                placeholder={t("auth.fullname_placeholder")}
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
               />
             </div>
             <div>
               <label htmlFor="email-address" className="sr-only">
-                Email address
+                {t("auth.email_label")}
               </label>
               <input
                 id="email-address"
@@ -84,14 +89,14 @@ export default function SignupPage() {
                 autoComplete="email"
                 required
                 className="relative block w-full border border-t-0 border-input bg-transparent px-3 py-2 text-foreground placeholder-muted-foreground focus:z-10 focus:border-foreground focus:outline-none focus:ring-1 focus:ring-foreground sm:text-sm"
-                placeholder="Email address"
+                placeholder={t("auth.email_placeholder")}
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
               />
             </div>
             <div>
               <label htmlFor="password" className="sr-only">
-                Password
+                {t("auth.password_label")}
               </label>
               <input
                 id="password"
@@ -100,7 +105,7 @@ export default function SignupPage() {
                 autoComplete="new-password"
                 required
                 className="relative block w-full rounded-b-md border border-t-0 border-input bg-transparent px-3 py-2 text-foreground placeholder-muted-foreground focus:z-10 focus:border-foreground focus:outline-none focus:ring-1 focus:ring-foreground sm:text-sm"
-                placeholder="Password"
+                placeholder={t("auth.password_placeholder")}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
@@ -120,7 +125,7 @@ export default function SignupPage() {
                 loading && "cursor-not-allowed"
               )}
             >
-              {loading ? "Creating account..." : "Sign up"}
+              {loading ? t("auth.signup.submitting") : t("auth.signup.submit")}
             </button>
           </div>
         </form>

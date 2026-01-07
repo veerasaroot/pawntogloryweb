@@ -1,6 +1,11 @@
+"use client";
+
 import Link from "next/link";
+import { useLanguage } from "@/components/LanguageContext";
 
 export function Footer() {
+  const { t } = useLanguage();
+
   return (
     <footer className="bg-background border-t border-border">
       <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
@@ -10,35 +15,91 @@ export function Footer() {
               Pawn to Glory
             </Link>
             <p className="mt-2 text-sm text-muted-foreground">
-              Elevate your chess game.
+              {t("footer.tagline")}
             </p>
           </div>
           <div>
-            <h3 className="text-sm font-semibold tracking-wider uppercase">Product</h3>
+            <h3 className="text-sm font-semibold tracking-wider uppercase">
+              {t("footer.product")}
+            </h3>
             <ul className="mt-4 space-y-2">
-              <li><Link href="/course" className="text-sm text-muted-foreground hover:text-foreground">Courses</Link></li>
-              <li><Link href="/tournament" className="text-sm text-muted-foreground hover:text-foreground">Tournaments</Link></li>
-            </ul>
-          </div>
-           <div>
-            <h3 className="text-sm font-semibold tracking-wider uppercase">Company</h3>
-            <ul className="mt-4 space-y-2">
-              <li><Link href="/about" className="text-sm text-muted-foreground hover:text-foreground">About</Link></li>
-              <li><Link href="/contact" className="text-sm text-muted-foreground hover:text-foreground">Contact</Link></li>
-              <li><Link href="/blog" className="text-sm text-muted-foreground hover:text-foreground">Blog</Link></li>
+              <li>
+                <Link
+                  href="/course"
+                  className="text-sm text-muted-foreground hover:text-foreground"
+                >
+                  {t("footer.courses")}
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/tournament"
+                  className="text-sm text-muted-foreground hover:text-foreground"
+                >
+                  {t("footer.tournaments")}
+                </Link>
+              </li>
             </ul>
           </div>
           <div>
-             <h3 className="text-sm font-semibold tracking-wider uppercase">Social</h3>
-             <ul className="mt-4 space-y-2">
-              <li><a href="#" className="text-sm text-muted-foreground hover:text-foreground">Twitter</a></li>
-              <li><a href="#" className="text-sm text-muted-foreground hover:text-foreground">Facebook</a></li>
+            <h3 className="text-sm font-semibold tracking-wider uppercase">
+              {t("footer.company")}
+            </h3>
+            <ul className="mt-4 space-y-2">
+              <li>
+                <Link
+                  href="/about"
+                  className="text-sm text-muted-foreground hover:text-foreground"
+                >
+                  {t("nav.about")}
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/contact"
+                  className="text-sm text-muted-foreground hover:text-foreground"
+                >
+                  {t("nav.contact")}
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/blog"
+                  className="text-sm text-muted-foreground hover:text-foreground"
+                >
+                  {t("nav.blog")}
+                </Link>
+              </li>
+            </ul>
+          </div>
+          <div>
+            <h3 className="text-sm font-semibold tracking-wider uppercase">
+              {t("footer.social")}
+            </h3>
+            <ul className="mt-4 space-y-2">
+              <li>
+                <a
+                  href="#"
+                  className="text-sm text-muted-foreground hover:text-foreground"
+                >
+                  Twitter
+                </a>
+              </li>
+              <li>
+                <a
+                  href="#"
+                  className="text-sm text-muted-foreground hover:text-foreground"
+                >
+                  Facebook
+                </a>
+              </li>
             </ul>
           </div>
         </div>
         <div className="mt-8 border-t border-border pt-8 text-center">
           <p className="text-xs text-muted-foreground">
-            &copy; {new Date().getFullYear()} Pawn to Glory. All rights reserved.
+            &copy; {new Date().getFullYear()} Pawn to Glory.{" "}
+            {t("footer.rights")}
           </p>
         </div>
       </div>

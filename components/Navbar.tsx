@@ -25,12 +25,12 @@ export function Navbar() {
         <div className="flex justify-between h-16 items-center">
           <div className="flex-shrink-0 flex items-center gap-2">
             {/* Placeholder for Logo */}
-            <div className="w-8 h-8 bg-foreground rounded-full" />
+            <img src="/images/logo.png" alt="Logo" className="w-8 h-8" />
             <Link href="/" className="font-bold text-xl tracking-tight">
               Pawn to Glory
             </Link>
           </div>
-          
+
           <div className="hidden md:flex items-center space-x-8">
             {links.map((link) => (
               <Link
@@ -44,8 +44,8 @@ export function Navbar() {
           </div>
 
           <div className="hidden md:flex items-center space-x-4">
-             <LanguageSwitcher />
-             <Link
+            <LanguageSwitcher />
+            <Link
               href="/login"
               className="text-sm font-medium hover:text-primary/80 transition-colors"
             >
@@ -86,17 +86,17 @@ export function Navbar() {
               </Link>
             ))}
             <div className="pt-4 flex flex-col gap-2">
-               <Link
+              <Link
                 href="/login"
                 className="w-full text-center px-4 py-2 border border-border rounded-md"
-                 onClick={() => setIsOpen(false)}
+                onClick={() => setIsOpen(false)}
               >
                 {t("nav.login")}
               </Link>
               <Link
                 href="/signup"
                 className="w-full text-center px-4 py-2 bg-foreground text-background rounded-md"
-                 onClick={() => setIsOpen(false)}
+                onClick={() => setIsOpen(false)}
               >
                 {t("nav.signup")}
               </Link>

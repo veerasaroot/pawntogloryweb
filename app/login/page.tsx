@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { cn } from "@/lib/utils";
+import { useLanguage } from "@/components/LanguageContext";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -13,6 +14,7 @@ export default function LoginPage() {
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
   const supabase = createClient();
+  const { t } = useLanguage();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -38,12 +40,15 @@ export default function LoginPage() {
       <div className="w-full max-w-md space-y-8">
         <div className="text-center">
           <h2 className="mt-6 text-3xl font-bold tracking-tight text-foreground">
-            Sign in to your account
+            {t("auth.login.title")}
           </h2>
           <p className="mt-2 text-sm text-muted-foreground">
-            Or{" "}
-            <Link href="/signup" className="font-medium text-foreground hover:underline">
-              create a new account
+            {t("auth.login.or")}{" "}
+            <Link
+              href="/signup"
+              className="font-medium text-foreground hover:underline"
+            >
+              {t("auth.login.create")}
             </Link>
           </p>
         </div>
@@ -51,7 +56,7 @@ export default function LoginPage() {
           <div className="-space-y-px rounded-md shadow-sm">
             <div>
               <label htmlFor="email-address" className="sr-only">
-                Email address
+                {t("auth.email_label")}
               </label>
               <input
                 id="email-address"
@@ -60,14 +65,14 @@ export default function LoginPage() {
                 autoComplete="email"
                 required
                 className="relative block w-full rounded-t-md border border-input bg-transparent px-3 py-2 text-foreground placeholder-muted-foreground focus:z-10 focus:border-foreground focus:outline-none focus:ring-1 focus:ring-foreground sm:text-sm"
-                placeholder="Email address"
+                placeholder={t("auth.email_placeholder")}
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
               />
             </div>
             <div>
               <label htmlFor="password" className="sr-only">
-                Password
+                {t("auth.password_label")}
               </label>
               <input
                 id="password"
@@ -76,7 +81,7 @@ export default function LoginPage() {
                 autoComplete="current-password"
                 required
                 className="relative block w-full rounded-b-md border border-input bg-transparent px-3 py-2 text-foreground placeholder-muted-foreground focus:z-10 focus:border-foreground focus:outline-none focus:ring-1 focus:ring-foreground sm:text-sm"
-                placeholder="Password"
+                placeholder={t("auth.password_placeholder")}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
@@ -96,7 +101,7 @@ export default function LoginPage() {
                 loading && "cursor-not-allowed"
               )}
             >
-              {loading ? "Signing in..." : "Sign in"}
+              {loading ? t("auth.login.submitting") : t("auth.login.submit")}
             </button>
           </div>
         </form>
