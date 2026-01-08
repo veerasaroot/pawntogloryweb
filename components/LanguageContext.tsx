@@ -20,6 +20,7 @@ const translations: Translations = {
     "nav.course": "Course",
     "nav.login": "Login",
     "nav.signup": "Sign Up",
+    "nav.dashboard": "Dashboard",
     "hero.title": "Pawn to Glory",
     "hero.subtitle":
       "The ultimate chess club. Join tournaments, master courses, and rise to the top.",
@@ -118,6 +119,7 @@ const translations: Translations = {
     "nav.course": "คอร์สเรียน",
     "nav.login": "เข้าสู่ระบบ",
     "nav.signup": "ลงทะเบียน",
+    "nav.dashboard": "แดชบอร์ด",
     "hero.title": "Pawn to Glory",
     "hero.subtitle":
       "สโมสรหมากรุกชั้นนำ เข้าร่วมการแข่งขัน เรียนรู้เทคนิค และก้าวสู่ความเป็นเลิศ",

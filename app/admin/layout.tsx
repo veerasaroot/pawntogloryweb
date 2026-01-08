@@ -1,16 +1,17 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
-import { 
-  LayoutDashboard, 
-  BookOpen, 
-  Trophy, 
-  FileText, 
-  Users, 
+import {
+  LayoutDashboard,
+  BookOpen,
+  Trophy,
+  FileText,
+  Users,
   Settings,
-  LogOut 
+  LogOut,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
@@ -24,15 +25,60 @@ const adminLinks = [
   { name: "Settings", href: "/admin/settings", icon: Settings },
 ];
 
-export default function AdminLayout({ children }: { children: React.ReactNode }) {
+export default function AdminLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   const pathname = usePathname();
   const router = useRouter();
   const supabase = createClient();
+  const [profile, setProfile] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function checkAdmin() {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      if (!user) {
+        router.push("/login");
+        return;
+      }
+
+      const { data } = await supabase
+        .from("profiles")
+        .select("role")
+        .eq("id", user.id)
+        .single();
+
+      if (data?.role !== "admin") {
+        router.push("/dashboard");
+      } else {
+        setProfile(data);
+        setLoading(false);
+      }
+    }
+
+    checkAdmin();
+  }, [supabase, router]);
 
   const handleSignOut = async () => {
     await supabase.auth.signOut();
     router.push("/");
   };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-muted/20">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-foreground"></div>
+      </div>
+    );
+  }
+
+  if (profile?.role !== "admin") {
+    return null; // Should be handled by router.push, but just in case
+  }
 
   return (
     <div className="flex min-h-screen bg-muted/20">
@@ -42,7 +88,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           <Link href="/" className="text-2xl font-bold tracking-tighter">
             Pawn to Glory
           </Link>
-          <p className="text-xs text-gray-400 mt-1 uppercase tracking-wider">Admin Panel</p>
+          <p className="text-xs text-gray-400 mt-1 uppercase tracking-wider">
+            Admin Panel
+          </p>
         </div>
         <nav className="flex-1 p-4 space-y-2">
           {adminLinks.map((link) => (
@@ -75,11 +123,11 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       {/* Main Content */}
       <main className="flex-1 overflow-y-auto">
         <header className="bg-background border-b border-border h-16 flex items-center px-6 md:hidden">
-           <Link href="/" className="font-bold">Pawn to Glory Admin</Link>
+          <Link href="/" className="font-bold">
+            Pawn to Glory Admin
+          </Link>
         </header>
-        <div className="p-6 md:p-12">
-          {children}
-        </div>
+        <div className="p-6 md:p-12">{children}</div>
       </main>
     </div>
   );

@@ -1,14 +1,70 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
-import { Menu, X } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Menu, X, LayoutDashboard } from "lucide-react";
 import { useLanguage } from "@/components/LanguageContext";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
+import { UserAvatar } from "@/components/UserAvatar";
+import { createClient } from "@/lib/supabase/client";
+import type { User } from "@supabase/supabase-js";
+
+interface UserProfile {
+  id: string;
+  full_name: string | null;
+  avatar_url: string | null;
+  role: string | null;
+}
 
 export function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
+  const [user, setUser] = useState<User | null>(null);
+  const [profile, setProfile] = useState<UserProfile | null>(null);
+  const [loading, setLoading] = useState(true);
   const { t } = useLanguage();
+  const supabase = createClient();
+
+  useEffect(() => {
+    // Get initial session
+    const getSession = async () => {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      setUser(user);
+      if (user) {
+        await fetchProfile(user.id);
+      }
+      setLoading(false);
+    };
+
+    getSession();
+
+    // Listen for auth changes
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange(async (event, session) => {
+      setUser(session?.user ?? null);
+      if (session?.user) {
+        await fetchProfile(session.user.id);
+      } else {
+        setProfile(null);
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  const fetchProfile = async (userId: string) => {
+    const { data } = await supabase
+      .from("profiles")
+      .select("id, full_name, avatar_url, role")
+      .eq("id", userId)
+      .single();
+
+    if (data) {
+      setProfile(data);
+    }
+  };
 
   const links = [
     { name: t("nav.home"), href: "/" },
@@ -18,6 +74,8 @@ export function Navbar() {
     { name: t("nav.tournament"), href: "/tournament" },
     { name: t("nav.course"), href: "/course" },
   ];
+
+  const isAdmin = profile?.role === "admin";
 
   return (
     <nav className="border-b border-border bg-background/80 backdrop-blur-md sticky top-0 z-50">
@@ -45,18 +103,46 @@ export function Navbar() {
 
           <div className="hidden md:flex items-center space-x-4">
             <LanguageSwitcher />
-            <Link
-              href="/login"
-              className="text-sm font-medium hover:text-primary/80 transition-colors"
-            >
-              {t("nav.login")}
-            </Link>
-            <Link
-              href="/signup"
-              className="bg-foreground text-background px-4 py-2 rounded-md text-sm font-medium hover:bg-foreground/90 transition-colors"
-            >
-              {t("nav.signup")}
-            </Link>
+            {!loading && (
+              <>
+                {user && profile ? (
+                  <div className="flex items-center gap-3">
+                    <Link
+                      href={isAdmin ? "/admin" : "/dashboard"}
+                      className="flex items-center gap-2 text-sm font-medium bg-foreground text-background px-4 py-2 rounded-md hover:bg-foreground/90 transition-colors"
+                    >
+                      <LayoutDashboard className="w-4 h-4" />
+                      {t("nav.dashboard") || "Dashboard"}
+                    </Link>
+                    <Link
+                      href={isAdmin ? "/admin/settings" : "/dashboard/settings"}
+                      className="flex items-center gap-2"
+                    >
+                      <UserAvatar
+                        name={profile.full_name}
+                        avatarUrl={profile.avatar_url}
+                        size="sm"
+                      />
+                    </Link>
+                  </div>
+                ) : (
+                  <>
+                    <Link
+                      href="/login"
+                      className="text-sm font-medium hover:text-primary/80 transition-colors"
+                    >
+                      {t("nav.login")}
+                    </Link>
+                    <Link
+                      href="/signup"
+                      className="bg-foreground text-background px-4 py-2 rounded-md text-sm font-medium hover:bg-foreground/90 transition-colors"
+                    >
+                      {t("nav.signup")}
+                    </Link>
+                  </>
+                )}
+              </>
+            )}
           </div>
 
           <div className="flex items-center gap-4 md:hidden">
@@ -86,20 +172,54 @@ export function Navbar() {
               </Link>
             ))}
             <div className="pt-4 flex flex-col gap-2">
-              <Link
-                href="/login"
-                className="w-full text-center px-4 py-2 border border-border rounded-md"
-                onClick={() => setIsOpen(false)}
-              >
-                {t("nav.login")}
-              </Link>
-              <Link
-                href="/signup"
-                className="w-full text-center px-4 py-2 bg-foreground text-background rounded-md"
-                onClick={() => setIsOpen(false)}
-              >
-                {t("nav.signup")}
-              </Link>
+              {!loading && (
+                <>
+                  {user && profile ? (
+                    <>
+                      <div className="flex items-center gap-3 px-3 py-2">
+                        <UserAvatar
+                          name={profile.full_name}
+                          avatarUrl={profile.avatar_url}
+                          size="md"
+                        />
+                        <div>
+                          <p className="font-medium">
+                            {profile.full_name || "User"}
+                          </p>
+                          <p className="text-xs text-muted-foreground capitalize">
+                            {profile.role || "User"}
+                          </p>
+                        </div>
+                      </div>
+                      <Link
+                        href={isAdmin ? "/admin" : "/dashboard"}
+                        className="w-full text-center px-4 py-2 bg-foreground text-background rounded-md flex items-center justify-center gap-2"
+                        onClick={() => setIsOpen(false)}
+                      >
+                        <LayoutDashboard className="w-4 h-4" />
+                        {t("nav.dashboard") || "Dashboard"}
+                      </Link>
+                    </>
+                  ) : (
+                    <>
+                      <Link
+                        href="/login"
+                        className="w-full text-center px-4 py-2 border border-border rounded-md"
+                        onClick={() => setIsOpen(false)}
+                      >
+                        {t("nav.login")}
+                      </Link>
+                      <Link
+                        href="/signup"
+                        className="w-full text-center px-4 py-2 bg-foreground text-background rounded-md"
+                        onClick={() => setIsOpen(false)}
+                      >
+                        {t("nav.signup")}
+                      </Link>
+                    </>
+                  )}
+                </>
+              )}
             </div>
           </div>
         </div>
